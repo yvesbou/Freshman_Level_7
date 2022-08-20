@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script type="text/javascript" language="javascript" src="abi.js"></script> 
+        <script
+            src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+            type="application/javascript"
+        ></script>
+        <script>
+            const MoodContractAddress = "0x03201430C83a44f137eA3f59c1473Ee493020A6B";
+            const MoodContractABI = abi
+            let MoodContract;
+            let signer;
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "ropsten");
+            provider
+                .send("eth_requestAccounts", [])
+                .then(() => {
+                    provider
+                        .listAccounts()
+                        .then((accounts) => {
+                            signer = provider.getSigner(accounts[0]);
+                            MoodContract = new ethers.Contract(
+                                MoodContractAddress,
+                                MoodContractABI,
+                                signer
+                            );
+                        });
+            });
+
+        async function getMood() {
+            const getMoodPromise = MoodContract.getMood();
+            const Mood = await getMoodPromise;
+            console.log(Mood);
+        }
+
+        async function setMood() {
+            const mood = document.getElementById("mood").value;
+            const setMoodPromise = MoodContract.setMood(mood);
+            await setMoodPromise;
+        }
+        </script>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
